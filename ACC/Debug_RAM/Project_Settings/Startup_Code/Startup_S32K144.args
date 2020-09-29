@@ -1,0 +1,18 @@
+-I"C:/Users/Kavya/workspaceS32DS.ARM/LPUART_Example/Sources"
+-I"C:/Users/Kavya/workspaceS32DS.ARM/LPUART_Example/Generated_Code"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/devices/S32K144/include"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/devices/S32K144"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/devices/S32K144/startup"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/devices"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/hal/inc"
+-I"C:/NXP/S32DS_ARM_v1.3/S32DS/S32_SDK_EAR_0.8.2/platform/drivers/inc"
+-x assembler-with-cpp
+-O0
+-g3
+-mcpu=cortex-m4
+-mthumb
+-mfloat-abi=hard
+-mfpu=fpv4-sp-d16
+-specs=nano.specs
+-specs=nosys.specs
+--sysroot="C:/nxp/S32DS_ARM_v1.3/Cross_Tools/gcc-arm-none-eabi-4_9/arm-none-eabi/newlib"
