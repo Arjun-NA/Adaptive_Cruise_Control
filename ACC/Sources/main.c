@@ -61,28 +61,9 @@ uint8_t  id[1], status[1], altitude[3], temperature[2];
 
 uint16_t altitude_meters;
 uint8_t  altitude_fraction;
-int8_t   temperature_c_deg;     // temperature is signed
-uint8_t  temperature_fraction;
 uint8_t  test;
-/*******************************************************************************
-Function Name : SysTick_Handler
-Modifies      : ready, status
-Notes         : Read MPL3115A2 status register
- *******************************************************************************/
-//void SysTick_Handler(void)
-//{
-//    status[0] = 0;
-//
-//    if(!(err_0 = LPI2C0_read(MPL3115A2_R, DR_STATUS_REG, status, 1)))
-//    {
-//        if(!(status[0] & 0x01)) // New data available
-//        {
-//            ready = 1;
-//        }
-//
-//    }
-//}
-/*Copied Above*/
+
+
 
 volatile int exit_code = 0;
 /* User includes (#include below this line is not maintained by Processor Expert) */
@@ -103,15 +84,11 @@ The board will greet you if you send 'Hello Board'\r\
  */
 int main(void)
 { 
-  /* Copied */
   SIRC_div();
   PORT_conf();
   LPI2C0_clock();
   LPI2C0_IRQs();
   LPI2C0_init();
-//  err_2 = LPI2C0_write(MPL3115A2_W, CTRL_REG1, 0x04);
-//  SysTick_conf();
-  /* Copied End */
 
   /* Write your local variable definition here */
 bool strReceived = false;
@@ -142,82 +119,29 @@ bool strReceived = false;
   PORT_conf();
   /* Initialize LPUART instance */
   LPUART_DRV_Init(FSL_LPUART1, &lpuart1_State, &lpuart1_InitConfig0);
-  /* Send a welcome message */
-//  LPUART_DRV_SendData(FSL_LPUART1, (uint8_t *)welcomeMsg, strlen(welcomeMsg));
-//  /* Wait for transmission to be complete */
+	
   while(LPUART_DRV_GetTransmitStatus(FSL_LPUART1, &bytesRemaining) != LPUART_STAT_SUCCESS);
 
-  /* Infinite loop:
-   * 	- Receive data from user
-   * 	- Echo the received data back
-   */
-//  FSL_SysTick->RVR |= 0x00B927C00;        // 200ms (48Mhz Core clock)
-
-  //SysTick Control and Status Register
-//  FSL_SysTick->CSR |= 0x00000007;
   SIRC_div();
   while (1)
     {
-      /*
-      Copied from Lidar code
-      */
-//	  test= test_function();
-//	  if(test % 200==0)
-//	    FSL_SysTick->RVR |= 0x00B927C00;        // 200ms (48Mhz Core clock)
-//
-//	    //SysTick Control and Status Register
-//	    FSL_SysTick->CSR |= 0x00000007;
-//	   if(!(err_0 = LPI2C0_read(MPL3115A2_R, DR_STATUS_REG, status, 1)))
-//	      {
-//	          if(!(status[0] & 0x01)) // New data available
-//	          {
-//	              ready = 1;
-//	          }
-//
-//	      }
-
-	    err_0 = LPI2C0_read(MPL3115A2_R, DR_STATUS_REG, status, 1);
+	err_0 = LPI2C0_read(MPL3115A2_R, DR_STATUS_REG, status, 1);
         altitude_meters =0;
         if(!(status[0] & 0x01))
         {	err_2 = LPI2C0_write(MPL3115A2_W, 0x00, 0x04);
             if(!(err_5 = LPI2C0_read(MPL3115A2_R, OUT_P_MSB_REG, altitude, 2)))
             {
-                /*  altitude [0] = MSB
-                 *  altitude [1] = CSB
-                 *  altitude [2] = LSB
-                 *  Value in a Q16.4 fixed-point format
-                 *  there are 16 integer bits (MSB, CSB) including the signed bit
-                 *  and four fractional bits (LSB[7-4]).
-                 */
+               
                 altitude_meters     |= (altitude[0] << 8);
                 altitude_meters     |= (altitude[1]);
-//                printf("%u\n",altitude_meters);
-                //copied from uart
-//                buffer[i] = 0;
+
 
                 sprintf(buffer, "%u\r\n", altitude_meters);
                 i = strlen((char *)buffer);
                 LPUART_DRV_SendData(FSL_LPUART1, buffer, i);
 
-                //end of copy
-
-
-
-
-
             }
 
-//            if(!(err_6 = LPI2C0_read(MPL3115A2_R, OUT_T_MSB_REG, temperature, 2)))
-//            {
-//                /*  temperature [0] = MSB
-//                 *  temperature [1] = LSB
-//                 *  The temperature data is stored as a signed 12-bit integer
-//                 *  The MSB register contains the integer part in °C
-//                 *  and the LSB[7-4] register contains the fractional part.
-//                 */
-//                temperature_c_deg     |= temperature[0];           // °C
-//                temperature_fraction  |= (temperature[1] >> 4);    // 1/x
-//            }
 
         }
 
@@ -225,42 +149,9 @@ bool strReceived = false;
 
 
 
-      /*
-      End of Copied from Lidar code
-      */
 
-
-
-
-
-
-      /* Get the received data */
-//      while(strReceived == false)
-//        {
-          /* Because the terminal appends new line to user data,
-          *	 receive and store data into a buffer until it is received
-          */
-//          LPUART_DRV_ReceiveData(FSL_LPUART1, &buffer[i], 1UL);
-          /* Wait for transfer to be completed */
-//          while(LPUART_DRV_GetReceiveStatus(FSL_LPUART1, &bytesRemaining) != LPUART_STAT_SUCCESS);
-          /* Check if current byte is new line */
-//          if(buffer[i++] == '\n')
-//            strReceived = true;
-//        }
-      /* Append null termination to the received string */
       buffer[i] = 0;
-      /* Check if data is "Hello Board".
-      *	 If comparison is true, send back "Hello World"
-      */
-//      if(strcmp((char *)buffer, "Hello Board\r\n") == 0)
-//        {
-//          strcpy((char *)buffer, "Hello World!!\r\n");
-//          i = strlen((char *)buffer);
-//        }
 
-      /* Send the received data back */
-//      LPUART_DRV_SendData(FSL_LPUART1, buffer, i);
-      /* Wait for transmission to be complete */
       while(LPUART_DRV_GetTransmitStatus(FSL_LPUART1, &bytesRemaining) != LPUART_STAT_SUCCESS);
       /* Reset the buffer length and received complete flag */
       strReceived = false;
@@ -350,18 +241,3 @@ void PORT_conf(void)
     PTD->PDDR |= (1 << 0);              // Data Direction (Output)
 }
 
-/*******************************************************************************
-Function Name : init_sys_tick
-Notes         : triggered every 200ms (48Mhz Core clock)
- *******************************************************************************/
-//void SysTick_conf(void)
-//{
-//    // SysTick Reload Value Register
-//    FSL_SysTick->RVR |= 0x00B927C00;        // 200ms (48Mhz Core clock)
-//
-//    //SysTick Control and Status Register
-//    FSL_SysTick->CSR |= 0x00000007;
-//    // [2] CLKSOURCE =  1 Core clock
-//    // [1] TICKINT   =  1 Counting down to zero asserts the SysTick exception request
-//    // [0] ENABLE    =  1 Counter enabled
-//}
